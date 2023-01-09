@@ -24,7 +24,6 @@ function App(){
         setInout(prev=>({input:prev.input.concat(value), output:value}))
       }
     }
-    console.log(inOut.output, formula)
   }
   
   function handleBack(){
@@ -58,9 +57,9 @@ function App(){
   function handleCalc(){
     let last = inOut.output
     let form = [...formula, last]
-    console.log(form)
     if(!equals){
-      while(form.join("").match(/[+-/*]/g)){
+      while(form.join("").match(/[+]|[-]|[/]|[*]/g)){
+        console.log("Calculation Statred ", form)
       if(form.includes("/")){
         while(form.indexOf("/")>0){
           let ind = form.indexOf("/")
@@ -69,7 +68,7 @@ function App(){
       } else if(form.includes("*")){
         while(form.indexOf("*")>0){
           let ind = form.indexOf("*")
-          form.splice(ind-1, 3, (form[ind-1]*form[ind+1]+""))
+          form.splice(ind-1, 3, (form[ind-1]*form[ind+1])+"")
         } 
       } else if(form.includes("+")){
         while(form.indexOf("+")>0){
@@ -82,12 +81,13 @@ function App(){
           form.splice(ind-1, 3, (form[ind-1]*1-form[ind+1]*1)+"")
         } 
       }
-    console.log(form, "2.5"/"3"*"5"+6)
+    console.log(form, "2.5"/"3"*"5"-16)
+    console.log(form.join("").match(/[+-/*]/g))
     }
-    setInout(prev=>({input:prev.input.concat("="+form[0]), output:""+form[0]}))
+    setInout(prev=>({input:prev.input.concat("="), output:""+form[0]}))
     setEquals(true)
     setFormula([])
-    } 
+    }  
   }
   
   return (
