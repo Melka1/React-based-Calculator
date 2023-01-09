@@ -1,38 +1,102 @@
-.App {
-  text-align: center;
+#container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+#calc {
+  margin: auto;
+  display: inline-grid;
+  grid-template: repeat(6, 70px)/repeat(4, 70px);
+  border: 1px solid;
+  padding: 5px;
+  background: black;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+#calc div {
+  background: #4d4d4d;
+  color: white;
+  border: 1px solid black;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  text-align: center;
+  font-family: "Courier Prime", monospace;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
-
-.App-link {
-  color: #61dafb;
+#calc div:hover {
+  border: 1px solid #979797;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+#calc div:active {
+  box-shadow: inset 0 0 4px 4px black;
 }
+#calc #display {
+  display: grid;
+  grid-column: 1/-1;
+  justify-content: initial;
+  text-align: right;
+  grid-template-rows: 2rem 2rem;
+  background: black;
+  gap: 2px;
+}
+#calc #display p {
+  border: 1px solid #979797;
+  margin: 0;
+  padding-right: 10px;
+  font-family: Share Tech Mono;
+}
+#calc #display .input {
+  grid-row: 1/2;
+  font-size: 1.2rem;
+  align-self: center;
+  height: 1.5rem;
+  padding: 2px;
+  padding-right: 10px;
+}
+#calc #display .output {
+  grid-row: 2/3;
+  align-self: center;
+}
+#calc #clears {
+  grid-column: 1/3;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#calc #clears:hover {
+  box-shadow: none;
+  border: none;
+}
+#calc #clears #back {
+  padding: 20px 10px 20px 10px;
+  background: rgb(132, 47, 47);
+  margin: 0;
+}
+#calc #clears #back:hover {
+  border: 1px solid #979797;
+}
+#calc #clears #back:active {
+  box-shadow: inset 0 0 4px 4px black;
+}
+#calc #clears #clear {
+  background: rgb(172, 57, 57);
+  padding: 20px 38px 20px 35px;
+  margin: 0;
+}
+#calc #clears #clear:hover {
+  border: 1px solid #979797;
+}
+#calc #clears #clear:active {
+  box-shadow: inset 0 0 4px 4px black;
+}
+#calc #equals {
+  grid-row: 5/-1;
+  grid-column: 4/-1;
+  background: rgb(0, 68, 102);
+}
+#calc #zero {
+  grid-column: 1/3;
+}
+#calc #divide, #calc #multiply, #calc #subtract, #calc #add {
+  background: rgb(102, 102, 102);
+}/*# sourceMappingURL=App.css.map */
