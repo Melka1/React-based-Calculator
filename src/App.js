@@ -2,100 +2,163 @@ import React from "react"
 import './App.css';
 
 function App(){
-  
-  const [inOut, setInout] = React.useState({input:"", output:""})
   const [equals, setEquals] = React.useState(false);
-  const [formula, setFormula] = React.useState([])
+  const [formula, setFormula] = React.useState([""])
+  const [negative, setNegative] = React.useState(true)
+  const [first, setFirst] = React.useState(true)
   
   function handleInput(e, value){
+    let lastElement = formula[formula.length - 1];
+    let ind = lastElement[0]=="-"?1:0
+    let dec = [...lastElement, value].join("").match(/[.]/g)?
+                [...lastElement, value].join("").match(/[.]/g).length:0
+    console.log(ind, lastElement, first, dec)
     if(!equals){
-      let dotArray = []
-      if(inOut.output.match(/[.]/g)){
-        dotArray = inOut.output.match(/[.]/g)
-      }
-      if(value !== "." && value !== "0" && Number.parseFloat(inOut.output)){
-        setInout(prev=>({ 
-            input:prev.input.concat(value),
-            output:""+ Number.parseFloat(prev.output.concat(value))
-        })) 
-      } else if((dotArray.length >=0||value==="0") && Number.parseFloat(inOut.output)) {
-        setInout(prev=>({input:prev.input.concat(value), output:prev.output.concat(value)}))
-      } else if((dotArray.length >=0||value==="0") && !Number.parseFloat(inOut.output)){
-        setInout(prev=>({input:prev.input.concat(value), output:value}))
-      }
+      if(dec<2){
+        if(lastElement[ind]=="0"&&(/[1-9]/).test(value)&&first){//from here
+          lastElement = lastElement.replace("0", value)
+          let form = formula
+          console.log("before ",form)
+          form.pop()
+          form.push(lastElement)
+          console.log("after ",form, first)
+          setFormula([...form])
+        } else {
+          if(lastElement[ind]=="0"&&value=="0"){
+
+          } else {
+            let array = formula
+            array[array.length-1] += value 
+            setFormula([...array])
+            setEquals(false)
+            console.log(formula)
+          }
+        }
+        setFirst(false)             //upto here
+      }  
+    } else {
+      setFormula([value])
+      setEquals(false)
     }
+    setNegative(false)
   }
   
   function handleBack(){
-    if(!equals){setInout(prev=>({
-      input:[...prev.input].slice(0,-1).join(""),  
-      output:[...prev.output].slice(0,-1).join("")}))}
-    else {
+    if(!equals){
+      
+    } else {
       handleClear()
     }
   }
   
   function handleSign(e, value){
-    if(!/[*/+-]$/.test(inOut.input) && inOut.input){
-      if(!equals){setInout(prev=>({input:prev.input.concat(value), output:value}))
-        setFormula(prev => [...prev, inOut.output, value])}
-      else {
-        let prevOut = inOut.output
-        setInout(prev=>({input:prevOut + value, output:value}))
-        setFormula(prev => [...prev, inOut.output, value])
+    let numB = [""], numF = [""];
+    let newArray=[]
+    if([...formula, value].join("").match(/\W+$/g)){
+      numB = [...formula, value].join("").match(/\W+$/g)
+      if(numB[0].length==3){
+        let array = [...formula]
+        array = array.slice(0, -2)
+        console.log(array)
+        newArray = array
+        numB=[""]
+      }
+    }
+    if([...formula, value].join("").match(/^\W+/g)){
+      numF = [...formula, value].join("").match(/^\W+/g)
+    }
+    console.log(numF, numB, negative?"negative":"minus")
+    if(numB[0].length<=2 && numF[0].length<2){
+      if(!equals){
+        if(!negative){//override shoud happen here  
+          let array = newArray.length==1?[...newArray, value, ""]:[...formula, value, ""]
+          setFormula([...array])
+          console.log(array, formula)
+          setNegative(true)
+        } else if(negative && value == "-") {
+          console.log("negative")
+          handleInput(e, "-") 
+        } else {
+          let array = [...formula]
+          array.pop()
+          array.pop()
+          array = [...array, value, ""]
+          setFormula([...array])
+          setNegative(true)
+        }
+        
+        setEquals(false)
+      } else {
+        let last = formula[formula.length-1]
+        setFormula([last, value, ""])
+        setNegative(true)
         setEquals(false)
       }
+      setFirst(true)
     }
   }
   
   function handleClear(){
-    setInout({input:"", output:"0"}) 
+    setFirst(true)
     setEquals(false)
-    setFormula([])
+    setFormula([""])
+    setNegative(true)
+    console.log(formula, "equals =", equals, "negative=", negative)
   }
   
   function handleCalc(){
-    let last = inOut.output
-    let form = [...formula, last]
+    let form = [...formula]
     if(!equals){
-      while(form.join("").match(/[+]|[-]|[/]|[*]/g)){
+      while(form.length>1&&form.join("").match(/[+]|[-]|[/]|[*]/g)){
         console.log("Calculation Statred ", form)
-      if(form.includes("/")){
-        while(form.indexOf("/")>0){
-          let ind = form.indexOf("/")
-          form.splice(ind-1, 3, (form[ind-1]/form[ind+1])+"")
-        } 
-      } else if(form.includes("*")){
-        while(form.indexOf("*")>0){
-          let ind = form.indexOf("*")
-          form.splice(ind-1, 3, (form[ind-1]*form[ind+1])+"")
-        } 
-      } else if(form.includes("+")){
-        while(form.indexOf("+")>0){
-          let ind = form.indexOf("+") 
-          form.splice(ind-1, 3, (form[ind-1]*1+form[ind+1]*1)+"")
-        } 
-      } else if(form.includes("-")){
-        while(form.indexOf("-")>0){
-          let ind = form.indexOf("-")
-          form.splice(ind-1, 3, (form[ind-1]*1-form[ind+1]*1)+"")
-        } 
+        if(form.includes("/")){
+          while(form.indexOf("/")>0){
+            let ind = form.indexOf("/")
+            form.splice(ind-1, 3, (form[ind-1]/form[ind+1])+"")
+          } 
+        } else if(form.includes("*")){
+          while(form.indexOf("*")>0){
+            let ind = form.indexOf("*")
+            form.splice(ind-1, 3, (form[ind-1]*form[ind+1])+"")
+          } 
+        } else if(form.includes("-")){
+          while(form.length>1&&form.indexOf("-")!==-1){
+            let ind = form.indexOf("-")
+            form.splice(ind-1, 3, (form[ind-1]*1-form[ind+1]*1)+"")
+          }
+        } else if(form.includes("+")){
+          while(form.indexOf("+")>0){
+            let ind = form.indexOf("+") 
+            form.splice(ind-1, 3, (form[ind-1]*1+form[ind+1]*1)+"")
+          } 
+        }  
       }
-    console.log(form, "2.5"/"3"*"5"-16)
-    console.log(form.join("").match(/[+-/*]/g))
+      console.log(form)
+      console.log(form.includes(/[+]|[-]|[/]|[*]/g))
+      if(form[0].length > 12){
+        let num = form[0].indexOf(".")
+        form[0] = form[0].slice(0, num+9)
+      }
+      setEquals(true)
+      setFormula([...formula, "=", form[0]])
+      setNegative(false)
+      setFirst(true)
+      console.log(formula)
     }
-    setInout(prev=>({input:prev.input.concat("="), output:""+form[0]}))
-    setEquals(true)
-    setFormula([])
-    }  
+  }  
+  let text="0"
+  if(formula[formula.length-1] == "" && formula.length>1){
+    text = formula[formula.length-2]
+  } else {
+    text = formula[formula.length-1]
   }
-  
+
   return (
   <div id="container">  
     <div id="calc">
       <div id="display">
-        <p className="input">{inOut.input?inOut.input:"0"}</p>
-        <p className="output">{inOut.output?inOut.output:"0"}</p>
+        <p className="input">{[...formula].join("")}</p>
+        <p className="output">{formula[0]?text:"0"}</p>
       </div>
       <div id="clears">
         <p id="back" onClick={handleBack}>&lt;</p>

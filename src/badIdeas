@@ -1,0 +1,136 @@
+      let dotArray = []
+      if(inOut.output.match(/[.]/g)){
+        dotArray = inOut.output.match(/[.]/g)
+      }
+      if(value !== "." && value !== "0" && Number.parseFloat(inOut.output)){
+        setInout(prev=>({ 
+            input:prev.input.concat(value),
+            output:""+ Number.parseFloat(prev.output.concat(value))
+        })) 
+      } else if((dotArray.length >=0||value==="0") && Number.parseFloat(inOut.output)) {
+        setInout(prev=>({input:prev.input.concat(value), output:Number.parseFloat(prev.output.concat(value))}))
+      } else if((dotArray.length >=0||value==="0") && !Number.parseFloat(inOut.output)){
+        setInout(prev=>({input:prev.input.concat(value), output:value}))
+      }
+
+
+      let prevOut = inOut.output
+      setInout(prev=>({input:prevOut + value, output:value}))
+      setFormula(prev => [...prev, inOut.output, value])
+      setEquals(false)
+
+      //final 
+      let dotArray = []
+    let put = [...(inOut.output+"")].join("")
+    if(!equals){
+      if((/[.]/g).test(put) && value=="."){
+        dotArray = put.match(/[.]/g)
+        dotArray.push(value)
+      }
+      let out = inOut.output + value;
+      console.log(out)
+      if(dotArray.length < 2){  
+        if(!(/[+]$|[-]$|[*]$|[/]$/).test(inOut.output)){
+            setInout(prev=>{
+              if(value == 0 && (/[.]/).test(inOut.output)){
+                console.log("one")
+                return ({
+                  input: prev.input.concat(value),
+                  output:out
+                })
+              } else if(value == "."||value=="-"){
+                console.log("two")
+                  if(value=="."){
+                    return ({
+                      input: prev.input.concat(value),
+                      output: out
+                    }) 
+                  } else {
+                    return ({
+                      input: prev.input.concat(value),
+                      output: (prev.output+"").concat(value)
+                    }) 
+                  }
+              } else if(inOut.input =="" || inOut.input == "0") {
+                console.log("three")
+                return ({
+                  input: Number.parseFloat(prev.input.concat(value))+"",
+                  output: Number.parseFloat(out)
+                }) 
+              } else {
+                console.log("four")
+                if((inOut.output)[0] == "-"){
+                  console.log("ouch1", inOut.output)
+                  return ({
+                    input: prev.input.concat(value),
+                    output: out
+                  })
+                } else {
+                  console.log("ouch2", inOut.output)
+                  return ({
+                    input: prev.input.concat(value),
+                    output: Number.parseFloat(out)
+                })}
+              }
+            })
+        setNegative(false)    
+        } else {
+          console.log("hey", inOut.output)
+          if(inOut.output[0] == "-"){
+            console.log("wee", inOut.output)
+            if(!negative){
+              console.log("yes")
+              setInout(prev=>({
+                input: prev.input.concat(value),
+                output: prev.output.concat(value)
+              }))
+              setNegative(false)
+            } else {
+              console.log("no")
+              setInout(prev=>({
+                input: prev.input.concat(value),
+                output: value
+              }))
+              setNegative(false)
+            }
+          } else {
+            console.log("what")
+            setNegative(false)
+            setInout(prev=>({
+              input: prev.input.concat(value),
+              output: Number.parseFloat(value)
+            }))
+          }
+        }
+        // setNegative(false)
+      }
+    }
+
+
+    //copied from input sign
+    if(!/[*]$|[/]$|[+]$|[-]$/.test(inOut.input) && inOut.input){
+      if(!equals){setInout(prev=>({
+        input:prev.input.concat(value), output:value
+        }))
+        setFormula(prev => [...prev, inOut.output, value])
+        setNegative(true)
+        console.log("minus")
+      }
+      else {
+        let prevOut = inOut.output
+        setInout(prev=>({input:prevOut + value, output:value}))
+        setFormula(prev => [...prev, inOut.output, value])
+        setNegative(true)
+        setEquals(false)
+      }
+      //setNegative(true)
+    }
+
+
+    // good code but created more bugs
+    else if(lastElement[0]=="-" && value =="."){
+      let last = [...lastElement, "0","."].join("")
+      let form = formula
+      form.push(last)
+      setFormula([...form])
+    }
